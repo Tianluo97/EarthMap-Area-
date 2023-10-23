@@ -1,7 +1,6 @@
-
 import { Mesh, Object3D, Float32BufferAttribute} from 'three'
 import { PlaneGeometry} from 'three'
-import {tileWidth, tileHeight, _kmScale, _mToKm} from '../utilities/constants'
+import {tileWidth, tileHeight, _kmScale, _mToKm, center} from '../utilities/constants'
 import { GUI } from 'dat.gui'
 import {mergedMaterial} from './material/topographyMaterial'
 
@@ -41,7 +40,7 @@ export class Mountain extends Mesh {
             this.originDivision,
             this.originDivision
         )
-        this.geometry.rotateX(-Math.PI/2.0)
+        //this.geometry.rotateX(-Math.PI/2.0)
         const arr1 = new Array(this.geometry.attributes.position.count);
         const arr = arr1.fill(1);
 
@@ -62,7 +61,7 @@ export class Mountain extends Mesh {
             
             default:
                 arr.forEach((a, index) => {
-                    this.geometry.attributes.position.setY(index, (data[index]* _mToKm * _kmScale));
+                    this.geometry.attributes.position.setZ(index, (data[index]* _mToKm * _kmScale));
                 });
         }
     }
@@ -85,7 +84,7 @@ export class Mountain extends Mesh {
             for (let j = 0; j < segmentDivision + 1; j ++){
                 let originIndex = j + i * (segmentDivision + 1)
                 let newIndex = (x + j) + (y + i) * (this.originDivision  + 1);
-                this.geometry.attributes.position.setY(originIndex, (data[newIndex] * scale));
+                this.geometry.attributes.position.setZ(originIndex, (data[newIndex] * scale));
             }
         }
     }
@@ -114,20 +113,16 @@ export class Mountain extends Mesh {
 
         switch(i) {
             case 0:
-                geometry.translate.x = -tileWidth/2
-                geometry.translate.z = tileHeight/2
+                geometry.translate(-tileWidth/2, -tileHeight/2, 0) 
               break;
             case 1:
-                geometry.translate.x = tileWidth/2
-                geometry.translate.z = tileHeight/2
+                geometry.translate(tileWidth/2, -tileHeight/2, 0) 
               break;
             case 2:
-                geometry.translate.x = -tileWidth/2
-                geometry.translate.z = -tileHeight/2
+                geometry.translate(-tileWidth/2, tileHeight/2, 0) 
               break;
             case 3:
-                geometry.translate.x = tileWidth/2
-                geometry.translate.z = -tileHeight/2
+                geometry.translate(tileWidth/2, tileHeight/2, 0) 
               break;
           }
     }

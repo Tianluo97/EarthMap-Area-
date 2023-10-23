@@ -26,8 +26,11 @@ export const tileHeight = 111  * _kmScale
 
 export const windTurbineNumber = 50
 
+/**
+ * 关于旋转瓦片以及设定瓦片的位置
+ */
+export const center = longlatToCoordinates(new THREE.Vector2(39, 114))
 export function longlatToCoordinates(coordinates){
-
     const radius = 20, 
     widthSegments = 360, 
     heightSegments = 180, 

@@ -5,7 +5,7 @@ import { _earthRadius } from '/utilities/constants.js'
 import GeoTIFF, { fromUrl, fromUrls, fromArrayBuffer, fromBlob } from 'geotiff';
 
 import { Mountain } from'/topography/Mountain'
-import { tileWidth, tileHeight} from '../utilities/constants'
+import { tileWidth, tileHeight, center} from '../utilities/constants'
 import { exportGLTF } from '../utilities/exportMethod'
 
 export class Mountains extends THREE.Group {
@@ -15,6 +15,7 @@ export class Mountains extends THREE.Group {
     this.type = "mountains"
     this.scene = scene                      
     this.mountains = [] 
+    this.mountainsGroup = new THREE.Group()
     this.mountainGeometries = []
     this.url = []
     this.data = []
@@ -29,10 +30,10 @@ export class Mountains extends THREE.Group {
 }
 
 async readUrl() {
-    this.url[0] = './data/topography/NASADEM_HGT_n39e114.tif';
-    this.url[1] = './data/topography/NASADEM_HGT_n40e114.tif';
-    // this.url[2] = './data/topography/NASADEM_HGT_n39e113.tif';
-    // this.url[3] = './data/topography/NASADEM_HGT_n40e113.tif';
+    this.url[0] = './data/topography/NASADEM_HGT_n39e113.tif';
+    this.url[1] = './data/topography/NASADEM_HGT_n39e114.tif';
+    this.url[2] = './data/topography/NASADEM_HGT_n40e113.tif';
+    this.url[3] = './data/topography/NASADEM_HGT_n40e114.tif';
 }
 
 async addMountains(){
@@ -49,9 +50,9 @@ async addMountains(){
 
         let mountain = new Mountain(this.data[i])
         this.mountains.push(mountain)
+        this.mountainsGroup.add(mountain)
         this.mountainGeometries.push(mountain.geometry)
-        this.scene.add(mountain) //NORMAL
-        
+
         // //let mountain test division
         // let mountain1 = new MountainDivision(this.data[i])
         // mountain1.position.z = -geometryHeight/4 * (i % 2)
@@ -63,14 +64,25 @@ async addMountains(){
         // }
         // this.scene.add(mountain1)
         // this.mountains.push(mountain1)
-        // //exportGLTF(mountain1)
+        // exportGLTF(mountain1)
     }
+
+    await this.setLongLat(this.mountainsGroup)
+    this.scene.add(this.mountainsGroup)
 
     //this.addMergedMountains(this.scene, this.mountainGeometries)
     //this.mountainSingle = new ExportMountain(this.data)
     //this.scene.add(this.mountainSingle)
     //exportGLTF(this.mountainSingle)
-  }
+}
+
+async setLongLat(mountainGroup){
+  mountainGroup.position.copy(center)
+  var lookVector = mountainGroup.position.clone()
+  lookVector.normalize().multiplyScalar(5)
+  lookVector = mountainGroup.position.clone().add(lookVector)
+  mountainGroup.lookAt(lookVector)
+}
 
   addMergedMountains(scene, mountainGeometries){
     this.mergedMountains = new mergedMountain(mountainGeometries)
