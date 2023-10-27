@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import {Object3D} from 'three'
-//import { turbineScale} from '../utilities/constants'
+import {turbineScale, center} from '../utilities/constants'
 //import { GUI } from 'dat.gui'
 //import {animationSheet} from '../animation/animation'
 
@@ -27,26 +27,32 @@ export class Turbine extends Object3D {
 
         this.windTurbine= gltf.scene.clone()
 
-        //this.windTurbine.scale.set(turbineScale, turbineScale, turbineScale) //HEIGHT 90M
-        this.windTurbine.rotation.y = 0.9
-        //animationSheet.createTurbineAnimation(this.windTurbine)
-        //this.testCylinder = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 90 * scale), new THREE.MeshBasicMaterial({color: 0xffff00}))
-        
+        /**
+         * 调整风机的位置与尺度
+         */
+        this.windTurbine.scale.set(turbineScale * 100, turbineScale * 100, turbineScale * 100) //HEIGHT 90M
+        //this.windTurbine.rotation.y = 0.9   
+        //this.windTurbine.rotation.x = Math.PI/2   
+        //animationSheet.createTurbineAnimation(this.windTurbine)   
+
         //this.scene.add(this.windTurbine)
-        //this.scene.add(this.testCylinder)
         
         this.circularDiagram = this.addCircularDiagram()
-        this.scene.add(this.circularDiagram)
+        //this.scene.add(this.circularDiagram)
         //animationSheet.createCircleAnimation(this.circularDiagram.children[2])  
 
-        this.mixer = new THREE.AnimationMixer(this.windTurbine )    
+        this.mixer = new THREE.AnimationMixer(this.windTurbine)    
         let action = this.mixer.clipAction(gltf.animations[0])  
-        action.play()     
+        //action.play()     
+
+        //this.testCylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 90 * turbineScale), new THREE.MeshBasicMaterial({color: 0xffff00, wireframe: true}))
+        //this.scene.add(this.testCylinder)
     }
 
-    //根据自己设定的bounday来随机排布风机（已弃用）
+    /**
+     * 根据自己设定的bounday来随机排布风机（已弃用）
+     */
     findLocation(boundaryPosition, intersectObj){
-
         const centerPosition = new THREE.Vector3(centroid.x, 0.0, -centroid.y)
         centerPosition.sub(boundaryPosition)
         centerPosition.multiplyScalar(Math.random())
@@ -63,34 +69,42 @@ export class Turbine extends Object3D {
         }else{
             console.log("no intersect")
         }
-        
         this.windTurbine.position.copy(boundaryPosition)
         this.testCylinder.position.copy(this.windTurbine.position)
         this.circularDiagram.position.copy(this.windTurbine.position)
     }
 
-    //根据csv提供的风机具体位置来排布风机
-    setLocation (turbinePosition, intersectObj){
+    /**
+     * 根据csv提供的风机具体位置来计算风机应该处于的高度
+     */
+    calculateHeightPosition (turbinePosition, intersectObj){
 
         //开始计算风机的相交处，然后设定风机的y值
-        let dir = new THREE.Vector3(0,1,0)
+        let dir = new THREE.Vector3(0,0,1)
         let raycaster, origin, intersectObject
-        origin = new THREE.Vector3(turbinePosition.x, 0, turbinePosition.z)
+        origin = new THREE.Vector3(turbinePosition.x, turbinePosition.y, 0)
         raycaster = new THREE.Raycaster(origin, dir)
         intersectObject = raycaster.intersectObjects(intersectObj)
 
         if (intersectObject.length> 0){
-            turbinePosition.y = intersectObject[0].point.y
+            turbinePosition.z = intersectObject[0].point.z
+            console.log(intersectObject[0].point.z)
         }else{
             console.log("no intersect")
         }
         
         //排布风机的位置
         this.windTurbine.position.copy(turbinePosition)
-        //console.log(this.windTurbine.position)
-        this.testCylinder.position.copy(this.windTurbine.position)
-        this.circularDiagram.position.copy(this.windTurbine.position)
-        this.circularDiagram.position.y += 0.5
+        //this.testCylinder.position.copy(this.windTurbine.position)
+        //this.circularDiagram.position.copy(this.windTurbine.position)
+        //this.circularDiagram.position.y += 0.5
+    }
+
+    /**
+     * 根据csv提供的风机具体位置与高度来排布风机
+     */
+    setLocation (turbinePosition){
+        this.windTurbine.position.copy(turbinePosition)
     }
 
     update(deltaTime){
@@ -101,7 +115,7 @@ export class Turbine extends Object3D {
 
       //OuterCircle
       const OuterCircle = new THREE.Mesh(new THREE.CircleGeometry( 2.5, 100 ), new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.3}))
-      
+
       //BoundaryCircle
       const radius   = 2.5,
             segments = 100,
@@ -116,13 +130,13 @@ export class Turbine extends Object3D {
       );
       geometry.index = null;
       const StrokeCircle = new THREE.LineLoop(geometry, material)
-      
+
       //innerCircle
       const InterCircle = new THREE.Mesh(new THREE.CircleGeometry( 0.5, 100 ), new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 1.0}))
 
-    //   animationSheet.createCircleAnimation(InterCircle)  
-    //   animationSheet.createCircleAnimation(StrokeCircle)  
-    //   animationSheet.createCircleAnimation2(OuterCircle)   
+      //animationSheet.createCircleAnimation(InterCircle)  
+      //animationSheet.createCircleAnimation(StrokeCircle)  
+      //animationSheet.createCircleAnimation2(OuterCircle)   
 
       //circleGroup
       const circleGroup = new THREE.Group()
@@ -130,4 +144,12 @@ export class Turbine extends Object3D {
       circleGroup.rotation.x = -Math.PI/2
       return circleGroup   
     }
+
+    setLongLat(turbine){
+        turbine.position.copy(center)
+        var lookVector = turbine.position.clone()
+        lookVector.normalize().multiplyScalar(5)
+        lookVector = turbine.position.clone().add(lookVector)
+        turbine.lookAt(lookVector)
+      }
 }

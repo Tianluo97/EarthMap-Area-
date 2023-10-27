@@ -11,8 +11,9 @@ import * as THREE from 'three'
  */
 
 /*** 关于风机
- * 一个风机的真实高度为150m
- * 一个风机的场景中的高度为 150m * _mToKm * _kmScale 
+ * 一个风机的真实高度为90m
+ * 模型风机的尺度为9000m
+ * 模型风机的场景中的高度为9000m * 0.01 * _mToKm * _kmScale 
  */
 
 export const _earthOrginRadius = 6378;
@@ -24,7 +25,8 @@ export const _earthCircumference = Math.PI * 2 * _earthRadius
 export const tileWidth = 85.276 * _kmScale
 export const tileHeight = 111  * _kmScale
 
-export const windTurbineNumber = 50
+export const windTurbineNumber = 51 //51
+export const turbineScale = 0.01 * _mToKm * _kmScale 
 
 /**
  * 关于旋转瓦片以及设定瓦片的位置

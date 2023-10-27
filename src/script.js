@@ -18,76 +18,20 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 scene.add(light)
+
 /**
  * Object
  */
 scene.add(earth)
 
-//createTile
-const tileWidth = 85.276 * 0.003
-const tileHeight = 111  * 0.003
-
-// //createTurbine
-// let url = '山西广灵.csv'
-// let positionTle = []
-// let turbines = new THREE.Group()
-
-// async function createTurbine(){
-
-//     const radius = 3  * 0.003  * 0.1
-//     const height = 90 * 0.003  * 0.1
-//     await loadFileAndPrintToConsole(url) 
-
-//     for (let i = 0; i < positionTle.length; i ++){
-//         const turbine = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, height) , new THREE.MeshBasicMaterial({ color: 0xfffff0, wireframe: false }))
-//         turbines.add(turbine)
-
-//         let positionX = positionTle[i].positionX - 114
-//         let positionZ = positionTle[i].positionZ  - 40
-//         const turbinePosition = new THREE.Vector3(positionX * tileWidth, -positionZ * tileHeight, 0.0)
-//         turbine.rotation.x = -Math.PI/2
-//         turbine.position.copy(turbinePosition)
-//     }
-// }
-
-// //createTurbine()
-
-// const center = longlatToCoordinates(new THREE.Vector2(39, 114))
-
-// //setting position
-// turbines.position.copy(center)
-// var lookVector = turbines.position.clone()
-// lookVector.normalize().multiplyScalar(5)
-// lookVector = turbines.position.clone().add(lookVector)
-// turbines.lookAt(lookVector)
-// //scene.add(turbines)
-
-// async function loadFileAndPrintToConsole(url) {
-//     try {
-//       const response = await fetch(url);    //响应成功
-//       const data = await response.text();   //读取出文件中的信息
-//       console.log(data)
-//       readintoLines(data)
-//     } catch (err) {
-//       console.error(err);
-//     }
-// }
-
-// function readintoLines(data){               //对于文件做一个分割与读取, 得到为对象格式的tle
-//     let splitData= data.split('\r\n') 
-    
-//     for(let i=0;i<splitData.length;i+=1){
-//         let turbineTle = splitData[i].split(',')
-//         let turbinePosition = {
-//             name: turbineTle[0],
-//             positionX: Number(turbineTle[1]),
-//             positionZ: Number(turbineTle[2]),
-//         }
-//         positionTle.push(turbinePosition)
-//     }
-// }
 const mountains = await new Mountains(scene)
-//const turbines= new Turbines(scene, )
+const testPlane = new THREE.Mesh(new THREE.PlaneGeometry(10,10,1), new THREE.MeshLambertMaterial({color: 0xffffff}))
+//scene.add(testPlane)
+const turbines= new Turbines(scene, [mountains.mountains[0], mountains.mountains[1]])
+ 
+window.addEventListener('dbclick', ()=>{
+    console.log(camera.position)
+})
 
 /**
  * Sizes
@@ -116,14 +60,13 @@ window.addEventListener('resize', () =>
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(40, sizes.width / sizes.height, 0.1, 100)
+const camera = new THREE.PerspectiveCamera(40, sizes.width / sizes.height, 0.1, 100000)
 camera.position.set(-36.17444101804413, -1.3149238903600657, 101.27290185799079)
 scene.add(camera)
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
-
 const axesHelper = new THREE.AxesHelper( 5 );
 scene.add( axesHelper );
 
