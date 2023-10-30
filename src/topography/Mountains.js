@@ -23,7 +23,6 @@ export class Mountains extends THREE.Group {
     
     this.turbineGroup = turbineGroup
     this.setLongLat(this.turbineGroup)
-    console.log(this.turbineGroup.rotation)
 
     // await anything you want
     await this.addMountains().catch(error => {     

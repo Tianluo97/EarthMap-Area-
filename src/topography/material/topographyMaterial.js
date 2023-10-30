@@ -4,7 +4,7 @@ import { GUI } from 'dat.gui'
 //import testFragmentShader from './shader/fragment.glsl'
 import {fogAdjustMethod} from './fogAdjustMethod.js'
 
-const baseColor = new THREE.TextureLoader().load('../topography/textures/BaseColor.png' );  
+const baseColor = new THREE.TextureLoader().load('../topography/textures/scene - 2023-09-13T145059.174_DefaultMaterial_BaseColor.png' );  
 // const normalMap = new THREE.TextureLoader().load('./textures/scene - 2023-08-24T103904.127_DefaultMaterial_Normal.png' ); 
 // const metalMap = new THREE.TextureLoader().load('./textures/scene - 2023-08-24T103904.127_DefaultMaterial_Metallic.png' ); 
 // const roughnessMap = new THREE.TextureLoader().load('./textures/test1/scene - 2023-09-13T145059.174_DefaultMaterial_Roughness.png' ); 

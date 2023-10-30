@@ -24,7 +24,6 @@ import studio from '@theatre/studio'
         this.turbine = this.animationSheet.object('Turbine', {
             opacity: types.number(0, {range: [0, 1], nudgeMultiplier: 0.1}),
           })
-        
     }
 
     earthAnimation(mesh){   
@@ -56,13 +55,20 @@ import studio from '@theatre/studio'
             b: types.number(camera.targetPosition.y, { range: [-300, 300], nudgeMultiplier: 0.001  }),
             c: types.number(camera.targetPosition.z, { range: [-300, 300], nudgeMultiplier: 0.001  }),
             }),
+            rotation: types.compound({
+            x1: types.number(camera.rotation.x, { range: [-2, 2], nudgeMultiplier: 0.0001  }),
+            y1: types.number(camera.rotation.y, { range: [-2, 2], nudgeMultiplier: 0.0001  }),
+            z1: types.number(camera.rotation.z, { range: [-2, 2], nudgeMultiplier: 0.0001  }),
+            }),
         })
 
         this.camera.onValuesChange((values) => {
             const { x, y, z } = values.position
             const { a, b, c } = values.targetPosition
+            const { x1, y1, z1 } = values.rotation
             
             camera.position.set(x, y, z)
+            camera.rotation.set(x1 * Math.PI, y1 * Math.PI, z1 * Math.PI)
             camera.targetPosition.copy(new THREE.Vector3(a, b, c))
             camera.lookAt(camera.targetPosition)
             camera.updateProjectionMatrix()

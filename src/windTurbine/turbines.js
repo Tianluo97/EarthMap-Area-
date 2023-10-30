@@ -59,8 +59,8 @@ export class Turbines extends THREE.Group {
     }
 
     readintoLines(data, data1){
-        let splitData= data.split('\n')     //mac是\n，windows是\r\n
-        let heightTle = data1.split('\n')
+        let splitData= data.split('\r\n')     //mac是\n，windows是\r\n
+        let heightTle = data1.split('\r\n')
         this.positionTle = []
         console.log(this.positionTle)
         for(let i=0;i<splitData.length;i+=1){
