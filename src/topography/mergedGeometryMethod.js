@@ -1,7 +1,7 @@
 
 import { Mesh} from 'three'
 import * as THREE from 'three'
-import {mergedMaterial} from './topographyMaterial'
+//import {mergedMaterial} from './topography/material'
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 
 export class mergedGeometryMethod extends Mesh {

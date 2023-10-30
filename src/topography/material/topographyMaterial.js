@@ -32,7 +32,7 @@ let uniforms = {
 };
 export {uniforms}
 
-export const mergedMaterial = new THREE.MeshLambertMaterial({
+export const mergedMaterial = new THREE.MeshStandardMaterial({
     // color: params.color,
     map: baseColor, 
     // normalMap: normalMap,

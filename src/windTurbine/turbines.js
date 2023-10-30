@@ -36,16 +36,14 @@ export class Turbines extends THREE.Group {
             let positionX = this.positionTle[i].positionX - 114
             let positionY = this.positionTle[i].positionY - 40
             let positionZ = this.positionTle[i].positionZ
-            const turbinePosition = new THREE.Vector3(positionX * tileWidth, positionY * tileHeight, positionZ)
+            const turbinePosition = new THREE.Vector3(
+            positionX * tileWidth, positionY * tileHeight, positionZ)
             turbine.setLocation(turbinePosition)
 
             this.turbines[i]= turbine  
             this.turbineGroup.add(turbine.windTurbine)
+            this.turbineGroup.add(turbine.circularDiagram)
         }
-
-        //map it to specific position
-        this.setLongLat(this.turbineGroup)
-        this.scene.add(this.turbineGroup)
     }
 
     async loadFileAndPrintToConsole(url, url1) {
@@ -61,9 +59,10 @@ export class Turbines extends THREE.Group {
     }
 
     readintoLines(data, data1){
-        let splitData= data.split('\r\n') 
-        let heightTle = data1.split('\r\n')
+        let splitData= data.split('\n')     //mac是\n，windows是\r\n
+        let heightTle = data1.split('\n')
         this.positionTle = []
+        console.log(this.positionTle)
         for(let i=0;i<splitData.length;i+=1){
             let turbineTle = splitData[i].split(',')
             let turbinePosition = {
@@ -74,15 +73,6 @@ export class Turbines extends THREE.Group {
             }
             this.positionTle.push(turbinePosition)
         }
-        console.log(this.positionTle)
-    }
-
-    setLongLat(turbine){
-        turbine.position.copy(center)
-        var lookVector = turbine.position.clone()
-        lookVector.normalize().multiplyScalar(5)
-        lookVector = turbine.position.clone().add(lookVector)
-        turbine.lookAt(lookVector)
     }
 
     update(deltaTime){

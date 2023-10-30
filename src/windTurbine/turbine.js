@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import {Object3D} from 'three'
 import {turbineScale, center} from '../utilities/constants'
 //import { GUI } from 'dat.gui'
-//import {animationSheet} from '../animation/animation'
+import {animationSheet} from '../animations/animation'
 
 export class Turbine extends Object3D {
     constructor(scene, gltf) {
@@ -30,7 +30,7 @@ export class Turbine extends Object3D {
         /**
          * 调整风机的位置与尺度
          */
-        this.windTurbine.scale.set(turbineScale * 100, turbineScale * 100, turbineScale * 100) //HEIGHT 90M
+        this.windTurbine.scale.set(turbineScale, turbineScale, turbineScale) //HEIGHT 90M
         //this.windTurbine.rotation.y = 0.9   
         //this.windTurbine.rotation.x = Math.PI/2   
         //animationSheet.createTurbineAnimation(this.windTurbine)   
@@ -43,7 +43,7 @@ export class Turbine extends Object3D {
 
         this.mixer = new THREE.AnimationMixer(this.windTurbine)    
         let action = this.mixer.clipAction(gltf.animations[0])  
-        //action.play()     
+        action.play()     
 
         //this.testCylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 90 * turbineScale), new THREE.MeshBasicMaterial({color: 0xffff00, wireframe: true}))
         //this.scene.add(this.testCylinder)
@@ -105,6 +105,8 @@ export class Turbine extends Object3D {
      */
     setLocation (turbinePosition){
         this.windTurbine.position.copy(turbinePosition)
+        this.circularDiagram.position.copy(this.windTurbine.position)
+        this.circularDiagram.position.z += 0.005
     }
 
     update(deltaTime){
@@ -114,13 +116,16 @@ export class Turbine extends Object3D {
     addCircularDiagram(){
 
       //OuterCircle
-      const OuterCircle = new THREE.Mesh(new THREE.CircleGeometry( 2.5, 100 ), new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.3}))
+      const outerRadius = 0.001
+      const innerRadius = outerRadius/5
 
+      const OuterCircle = new THREE.Mesh(new THREE.CircleGeometry( outerRadius, 100 ), new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.3}))
+ 
       //BoundaryCircle
-      const radius   = 2.5,
-            segments = 100,
+
+       const segments = 100,
             material = new THREE.LineBasicMaterial( { color: 0xffffff, linewidth: 0.5, transparent: true, opacity: 0.8} ),
-            geometry = new THREE.CircleGeometry( radius, segments );
+            geometry = new THREE.CircleGeometry( outerRadius, segments );
                                                 
       const itemSize = 3;
       geometry.setAttribute('position',
@@ -132,16 +137,17 @@ export class Turbine extends Object3D {
       const StrokeCircle = new THREE.LineLoop(geometry, material)
 
       //innerCircle
-      const InterCircle = new THREE.Mesh(new THREE.CircleGeometry( 0.5, 100 ), new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 1.0}))
+      const InterCircle = new THREE.Mesh(new THREE.CircleGeometry( innerRadius, 100 ), new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 1.0}))
 
-      //animationSheet.createCircleAnimation(InterCircle)  
-      //animationSheet.createCircleAnimation(StrokeCircle)  
-      //animationSheet.createCircleAnimation2(OuterCircle)   
-
+      animationSheet.turbineAnimation(InterCircle)  
+      animationSheet.turbineAnimation(StrokeCircle)  
+      animationSheet.turbineAnimation(OuterCircle)   
+      
       //circleGroup
       const circleGroup = new THREE.Group()
-      circleGroup.add(StrokeCircle, OuterCircle, InterCircle)
-      circleGroup.rotation.x = -Math.PI/2
+      circleGroup.add(OuterCircle, InterCircle)
+      //circleGroup.add(OuterCircle)
+      //circleGroup.rotation.x = -Math.PI/2
       return circleGroup   
     }
 

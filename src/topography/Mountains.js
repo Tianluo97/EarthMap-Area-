@@ -5,11 +5,12 @@ import { _earthRadius } from '/utilities/constants.js'
 import GeoTIFF, { fromUrl, fromUrls, fromArrayBuffer, fromBlob } from 'geotiff';
 
 import { Mountain } from'/topography/Mountain'
+import { mergedGeometryMethod } from'/topography/mergedGeometryMethod'
 import { tileWidth, tileHeight, center} from '../utilities/constants'
 import { exportGLTF } from '../utilities/exportMethod'
 
 export class Mountains extends THREE.Group {
-  constructor(scene){
+  constructor(scene, turbineGroup){
     return (async () => {
     super()
     this.type = "mountains"
@@ -19,6 +20,10 @@ export class Mountains extends THREE.Group {
     this.mountainGeometries = []
     this.url = []
     this.data = []
+    
+    this.turbineGroup = turbineGroup
+    this.setLongLat(this.turbineGroup)
+    console.log(this.turbineGroup.rotation)
 
     // await anything you want
     await this.addMountains().catch(error => {     
@@ -52,19 +57,6 @@ async addMountains(){
         this.mountains.push(mountain)
         this.mountainsGroup.add(mountain)
         this.mountainGeometries.push(mountain.geometry)
-
-        // //let mountain test division
-        // let mountain1 = new MountainDivision(this.data[i])
-        // mountain1.position.z = -geometryHeight/4 * (i % 2)
-        // if(i == 2 || i == 3) {
-        //   mountain1.position.x = -geometryWidth
-        // }
-        // else if(i == 4|| i == 5) {
-        //   mountain1.position.x = geometryWidth
-        // }
-        // this.scene.add(mountain1)
-        // this.mountains.push(mountain1)
-        // exportGLTF(mountain1)
     }
 
     await this.setLongLat(this.mountainsGroup)
@@ -78,16 +70,22 @@ async addMountains(){
 
 async setLongLat(mountainGroup){
   mountainGroup.position.copy(center)
-  var lookVector = mountainGroup.position.clone()
-  lookVector.normalize().multiplyScalar(5)
-  lookVector = mountainGroup.position.clone().add(lookVector)
-  mountainGroup.lookAt(lookVector)
+  // var lookVector = mountainGroup.position.clone()
+  // lookVector.normalize().multiplyScalar(5)
+  // lookVector = mountainGroup.position.clone().add(lookVector)
+  // mountainGroup.lookAt(lookVector)
+  mountainGroup.rotation.set(-0.7252609053826057, 0.3216092814144043, 0.2731862631967506)
 }
 
   addMergedMountains(scene, mountainGeometries){
-    this.mergedMountains = new mergedMountain(mountainGeometries)
+    this.mergedMountains = new mergedGeometryMethod(mountainGeometries)
     scene.add(this.mergedMountains) 
-    exportGLTF(this.mergedMountains)
+   // exportGLTF(this.mergedMountains)
+  }
+
+async addTurbineToGroup(turbineGroup){
+    this.mountainsGroup.add(turbineGroup)
+    console.log(this.mountainsGroup)
   }
 }
 

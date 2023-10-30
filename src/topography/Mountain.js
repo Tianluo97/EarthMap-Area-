@@ -7,7 +7,7 @@ import {mergedMaterial} from './material/topographyMaterial'
 export class Mountain extends Mesh {
     constructor(data) {
         super()
-        this.originDivision = 3600  //未被分段前的division
+        this.originDivision = 1800  //未被分段前的division
 
         //构建好geometry的高度
         this.buildGeometry(data)
@@ -48,14 +48,14 @@ export class Mountain extends Mesh {
             case 1200:
                 arr.forEach((a, index) => {
                     const row = Math.floor(index / (1200 + 1));
-                    this.geometry.attributes.position.setY(index, (data[3*row*((1200 * 3)+1) + (index % (1200 + 1)) * 3]* _mToKm * _kmScale));
+                    this.geometry.attributes.position.setZ(index, (data[3*row*((1200 * 3)+1) + (index % (1200 + 1)) * 3]* _mToKm * _kmScale));
                 });
             break;
             
             case 1800:
                 arr.forEach((a, index) => {
                     const row = Math.floor(index / (1800 + 1));
-                    this.geometry.attributes.position.setY(index, (data[2*row*((1800 * 2)+1) + (index % (1800 + 1)) * 2]* _mToKm * _kmScale ));
+                    this.geometry.attributes.position.setZ(index, (data[2*row*((1800 * 2)+1) + (index % (1800 + 1)) * 2]* _mToKm * _kmScale ));
                 });
             break;
             
@@ -102,8 +102,28 @@ export class Mountain extends Mesh {
 			for ( let ix = 0; ix < gridX1; ix ++ ) { 
                 const uvX = ix / gridX
                 const uvY = 1.0 - ( iy / gridY )
-				uvs.push( uvX * 0.5 + (index < 2 ? 0.5 : 0.0));         //写死的功能模块，index是0或1的时候，uv的x坐标平移0.5
-				uvs.push( uvY * 0.5 + (index % 2 === 0 ? 0.0 : 0.5));
+				// uvs.push( uvX * 0.5 + (index < 2 ? 0.5 : 0.0));        
+                // //写死的功能模块，index是0或1的时候，uv的x坐标平移0.5
+				// uvs.push( uvY * 0.5 + (index % 2 === 0 ? 0.0 : 0.5));
+
+                if (index == 0){
+                    uvs.push( uvX * 0.5 + 0.0);
+                    uvs.push( uvY * 0.5 + 0.0);
+                }
+                if (index == 1) {
+                    uvs.push( uvX * 0.5 + 0.5);
+                    uvs.push( uvY * 0.5 + 0.0);
+                }
+                if (index == 2) {
+                    uvs.push( uvX * 0.5 + 0.0);
+                    uvs.push( uvY * 0.5 + 0.5);
+                }
+                if (index == 3) {
+                    uvs.push( uvX * 0.5 + 0.5);
+                    uvs.push( uvY * 0.5 + 0.5);
+                }
+
+
 			}   
 		}
         geometry.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
