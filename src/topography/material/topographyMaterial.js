@@ -3,16 +3,17 @@ import { GUI } from 'dat.gui'
 //import testVertexShader from './shader/vertex.glsl'
 //import testFragmentShader from './shader/fragment.glsl'
 import {fogAdjustMethod} from './fogAdjustMethod.js'
+import {animationSheet} from '/animations/animation'
 
 const baseColor = new THREE.TextureLoader().load('../topography/textures/scene - 2023-09-13T145059.174_DefaultMaterial_BaseColor.png' );  
-// const normalMap = new THREE.TextureLoader().load('./textures/scene - 2023-08-24T103904.127_DefaultMaterial_Normal.png' ); 
-// const metalMap = new THREE.TextureLoader().load('./textures/scene - 2023-08-24T103904.127_DefaultMaterial_Metallic.png' ); 
-// const roughnessMap = new THREE.TextureLoader().load('./textures/test1/scene - 2023-09-13T145059.174_DefaultMaterial_Roughness.png' ); 
-// const displacementMap = new THREE.TextureLoader().load('./textures/scene - 2023-08-24T103904.127_DefaultMaterial_Height.jpg' );  
-// displacementMap.wrapS = THREE.RepeatWrapping;
-// displacementMap.wrapT = THREE.RepeatWrapping;
-// displacementMap.repeat.set( 50, 50 );
-// const aoMap = new THREE.TextureLoader().load('./data/textures/Ambient Occlusion Map from Mesh DefaultMaterial.png' );
+//const normalMap = new THREE.TextureLoader().load('./textures/scene - 2023-08-24T103904.127_DefaultMaterial_Normal.png' ); 
+//const metalMap = new THREE.TextureLoader().load('./textures/scene - 2023-08-24T103904.127_DefaultMaterial_Metallic.png' ); 
+//const roughnessMap = new THREE.TextureLoader().load('./textures/test1/scene - 2023-09-13T145059.174_DefaultMaterial_Roughness.png' ); 
+//const displacementMap = new THREE.TextureLoader().load('./textures/scene - 2023-08-24T103904.127_DefaultMaterial_Height.jpg' );  
+//displacementMap.wrapS = THREE.RepeatWrapping;
+//displacementMap.wrapT = THREE.RepeatWrapping;
+//displacementMap.repeat.set( 50, 50 );
+//const aoMap = new THREE.TextureLoader().load('./data/textures/Ambient Occlusion Map from Mesh DefaultMaterial.png' );
 
 const params = {
     color1: 0xfff1da,
@@ -43,31 +44,33 @@ export const mergedMaterial = new THREE.MeshStandardMaterial({
     // metalness: 0.0, 
     // roughness: 1.0, 
     side: THREE.DoubleSide,
-    //roughnessMap: roughnessMap,
-    // transparent:true
+    // roughnessMap: roughnessMap,
+    transparent:true,
+    opacity:1.0
     // side: THREE.DoubleSide 
     // WrapS : THREE.RepeatWrapping,
     // WrapT : THREE.RepeatWrapping,
 });
 
-fogAdjustMethod (uniforms, mergedMaterial)
+fogAdjustMethod(uniforms, mergedMaterial)
+animationSheet.topographyMaterialAnimation(mergedMaterial)
 
 const gui = new GUI()
 const mountainMaterial = gui.addFolder('THREE.mountainMaterial')
 mountainMaterial.addColor(params, 'color1').name('nearFogColor').onChange(function(value) {
-        uniforms.fogNearColor.value.set( value );
+    uniforms.fogNearColor.value.set( value );
 });
 mountainMaterial.addColor(params, 'color2').name('farFogColor').onChange(function(value) {
-        uniforms.fogFarColor.value.set( value );
+    uniforms.fogFarColor.value.set( value );
 });
 mountainMaterial.add(params, "fogNoiseFreq", 0, 0.01, 0.0012).onChange(function() {
-        uniforms.fogNoiseFreq.value = params.fogNoiseFreq;
+    uniforms.fogNoiseFreq.value = params.fogNoiseFreq;
 });
 mountainMaterial.add(params, "fogNoiseSpeed", 0, 1000, 100).onChange(function() {
-        uniforms.fogNoiseSpeed.value = params.fogNoiseSpeed;
+    uniforms.fogNoiseSpeed.value = params.fogNoiseSpeed;
 });
 mountainMaterial.add(params, "fogNoiseImpact", 0, 1).onChange(function() {
-        uniforms.fogNoiseImpact.value = params.fogNoiseImpact;
+    uniforms.fogNoiseImpact.value = params.fogNoiseImpact;
 });
 
 // mountainMaterial.add(mergedMaterial, 'metalness', 0, 10, 0.1).name('metalness')

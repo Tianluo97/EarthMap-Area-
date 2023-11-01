@@ -2,12 +2,13 @@ import * as THREE from 'three'
 import {Mesh} from 'three'
 import { _earthRadius } from '/utilities/constants.js'
 import { GUI } from 'dat.gui'
+import {animationSheet} from '/animations/animation'
 
 export class CloudLayer1Material {
     constructor() {
 
     const customUniforms = {
-        atmosphereIntensity: { value: 0.7 },
+        cloudCoverage: { value: 1.0 },
     }
 
     const cloudTexture = new THREE.TextureLoader().load('./earth/textures/clouds.png' ); 
@@ -18,15 +19,16 @@ export class CloudLayer1Material {
             alphaMap: cloudTexture,
             displacementMap: cloudTexture,
             displacementScale: 0.0,
-            opacity: 0.5,
+            opacity: 0.2,
             fog: false
         }
     );
-
+    
+    
     material.onBeforeCompile = (shader) =>
     {
 
-        shader.uniforms.atmosphereIntensity = customUniforms.atmosphereIntensity
+        shader.uniforms.cloudCoverage = customUniforms.cloudCoverage
     
          //uniform参数
          shader.vertexShader = shader.vertexShader.replace(
@@ -34,7 +36,7 @@ export class CloudLayer1Material {
             `
                 #include <common>
     
-                uniform float atmosphereIntensity; 
+                uniform float cloudCoverage; 
             `
         )
 
@@ -43,7 +45,7 @@ export class CloudLayer1Material {
             `
                 #include <common>
     
-                uniform float atmosphereIntensity; 
+                uniform float cloudCoverage; 
             `
         )
 
@@ -53,13 +55,13 @@ export class CloudLayer1Material {
             `
             #ifdef USE_DISPLACEMENTMAP
     
-                float displacementIntensity = smoothstep(0.0, atmosphereIntensity,texture2D( displacementMap, vUv ).x);
+                float displacementIntensity = smoothstep(0.0, cloudCoverage,texture2D( displacementMap, vUv ).x);
                 transformed += normalize( objectNormal ) * displacementIntensity * displacementScale + displacementBias;
     
             #endif
             `
         )
-    
+        
         //cubicPulse function define
         shader.fragmentShader = shader.fragmentShader.replace(
             '#include <common>',
@@ -75,25 +77,25 @@ export class CloudLayer1Material {
                 }
             `
         )
-        
+
         //AlphaMap
         shader.fragmentShader = shader.fragmentShader.replace(
             '#include <alphamap_fragment>',
             `
             #ifdef USE_ALPHAMAP
-    
-                float intensity = smoothstep(0.0, atmosphereIntensity, texture2D( alphaMap, vUv).g);
+
+                float intensity = smoothstep(0.0, cloudCoverage, texture2D( alphaMap, vUv).g);
                 diffuseColor.a *= intensity;
             #endif
             `
         )
-            
+
         //添加遮罩，使得上下左右没有云层
         shader.fragmentShader = shader.fragmentShader.replace(
             '#include <output_fragment>',
             `
             #include <output_fragment>
-    
+
             //Mask
             float yMask = cubicPulse(0.55,0.4,vUv.y);
             float xMask =  dot(geometry.normal , vec3(0., 0., 1.0));
@@ -114,11 +116,12 @@ export class CloudLayer1Material {
             `
         )
     }
-
+    
+    //animationSheet.cloudMaterialAnimation(material)
     const gui = new GUI()
     var postProcessing = gui.addFolder('EarthCloud')
-    postProcessing.add(customUniforms.atmosphereIntensity, 'value').min(0).max(1.0).step(0.0001).name('cloudCover')
-    
+    postProcessing.add(customUniforms.cloudCoverage, 'value').min(0).max(1.0).step(0.0001).name('cloudCover')
+
     return material
   }
 

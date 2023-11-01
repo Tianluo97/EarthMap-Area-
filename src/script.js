@@ -64,7 +64,6 @@ testPlane.rotation.set(-0.7252609053826057, 0.3216092814144043, 0.27318626319675
 const turbineTest = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 600 * 0.01 *  _kmScale), new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: false}))
 turbineTest.position.copy(testPlane.position)
 turbineTest.rotation.x = -Math.PI/2
-
 //turbineTest.rotation.set(-0.7252609053826057, 0.3216092814144043, 0.2731862631967506)
 
 /**
@@ -82,7 +81,13 @@ scene.add(objectGroup)
 animationSheet.earthAnimation(objectGroup)
 animationSheet.atmosphereAnimation(objectGroup, objectGroup.children[0])
 
-
+/**
+ * Plane
+ */
+const plane = new THREE.Mesh(new THREE.PlaneGeometry(7168 * 0.01, 1600 * 0.01), new THREE.MeshLambertMaterial({color: 0xffffff, transparent: true, opacity: 0.3}))
+plane.position.set(0, 0, 20.1)
+scene.add(plane)
+animationSheet.fogMaterialAnimation(plane.material)
 /**
  * camera rotation recording
  */
@@ -91,7 +96,7 @@ window.addEventListener('dblclick', () => {
 })
 
 //_x: 0.5182061374903414, _y: 0, _z: 0, _w: 0.8552557506777382
-// _x: 0.499685742059271, _y: -0.5003140605486474, _z: -0.4996857420592711, _w: 0.5003140605486475
+//_x: 0.499685742059271, _y: -0.5003140605486474, _z: -0.4996857420592711, _w: 0.5003140605486475
 
 /**
  * Sizes
@@ -100,7 +105,6 @@ const sizes = {
     width: window.innerWidth,
     height: window.innerHeight
 }
-
 
 window.addEventListener('resize', () =>
 {
@@ -120,7 +124,6 @@ window.addEventListener('resize', () =>
 /**
  * Camera
  */
-
 scene.add(camera)
 const helper1 = new THREE.CameraHelper( camera );
 scene.add( helper1 );

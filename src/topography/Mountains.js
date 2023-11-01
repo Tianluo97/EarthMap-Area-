@@ -38,6 +38,8 @@ async readUrl() {
     this.url[1] = './data/topography/NASADEM_HGT_n39e114.tif';
     this.url[2] = './data/topography/NASADEM_HGT_n40e113.tif';
     this.url[3] = './data/topography/NASADEM_HGT_n40e114.tif';
+    this.url[4] = './data/topography/NASADEM_HGT_n39e112.tif';
+    this.url[5] = './data/topography/NASADEM_HGT_n40e112.tif';
 }
 
 async addMountains(){
@@ -70,9 +72,9 @@ async addMountains(){
 async setLongLat(mountainGroup){
   mountainGroup.position.copy(center)
   // var lookVector = mountainGroup.position.clone()
-  // lookVector.normalize().multiplyScalar(5)
+  // lookVector.normalize().multiplyScalar(0.1)
   // lookVector = mountainGroup.position.clone().add(lookVector)
-  // mountainGroup.lookAt(lookVector)
+  // mountainGroup.position.copy(lookVector)
   mountainGroup.rotation.set(-0.7252609053826057, 0.3216092814144043, 0.2731862631967506)
 }
 

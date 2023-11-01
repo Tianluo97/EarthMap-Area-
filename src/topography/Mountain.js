@@ -144,6 +144,12 @@ export class Mountain extends Mesh {
             case 3:
                 geometry.translate(tileWidth/2, tileHeight/2, 0) 
               break;
+            case 4:
+                geometry.translate(-tileWidth - tileWidth/2, -tileHeight/2, 0) 
+              break;
+            case 5:
+                geometry.translate(-tileWidth - tileWidth/2, tileHeight/2, 0) 
+              break;
           }
     }
 }

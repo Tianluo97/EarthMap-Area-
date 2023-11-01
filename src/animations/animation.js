@@ -23,7 +23,16 @@ import studio from '@theatre/studio'
         // animate
         this.turbine = this.animationSheet.object('Turbine', {
             opacity: types.number(0, {range: [0, 1], nudgeMultiplier: 0.1}),
-          })
+        })
+        
+        //cloud
+        this.cloud = this.animationSheet.object('Cloud', {
+            opacity: types.compound({
+                x: types.number(0.2, { range: [0, 2], nudgeMultiplier: 0.0001  }),
+                y: types.number(0.4, { range: [0, 2], nudgeMultiplier: 0.0001  }),
+                z: types.number(1.0, { range: [0, 2], nudgeMultiplier: 0.0001  }),
+            }),
+        })
     }
 
     earthAnimation(mesh){   
@@ -84,7 +93,6 @@ import studio from '@theatre/studio'
             // camera.lookAt(camera.targetPosition)
         })
     }
-    
 
     turbineAnimation(turbine){
         this.turbine.onValuesChange((values) => {
@@ -93,10 +101,41 @@ import studio from '@theatre/studio'
         })
     }
 
+    topographyMaterialAnimation(material){
+        this.topography = this.animationSheet.object('Topography', {
+            opacity: types.number(0, {range: [0, 1], nudgeMultiplier: 0.1}),
+          })
+
+        this.topography.onValuesChange((values) => {
+            const x = values.opacity
+            material.opacity = x
+        })
+    }
+
+    fogMaterialAnimation(material){
+        this.fog = this.animationSheet.object('Fog', {
+            opacity: types.number(0, {range: [0, 1], nudgeMultiplier: 0.1}),
+          })
+
+        this.fog.onValuesChange((values) => {
+            const x = values.opacity
+            material.opacity = x
+        })
+    }
+
+    cloudMaterialAnimation(material1, material2, material3){
+        this.cloud.onValuesChange((values) => {
+            const { x, y, z } = values.opacity
+            material1.opacity = x
+            material2.opacity = y
+            material3.opacity = z
+        })
+    }
+
     atmosphereAnimation(earthGroup, earthAtmosphere){
         this.atmosphere = this.animationSheet.object('Atmosphere', {
             opacity: types.number(10.0, {range: [0, 10], nudgeMultiplier: 0.1}),
-          })
+        })
 
         this.atmosphere.onValuesChange((values) => {
             const x = values.opacity
@@ -108,8 +147,6 @@ import studio from '@theatre/studio'
             }
         })
     }
-
-    
 }
 
 export const animationSheet = new sheet()

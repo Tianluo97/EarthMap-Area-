@@ -15,11 +15,11 @@ export class Turbine extends Object3D {
             
             child.children.forEach(element => {
                 if(element.type === 'Mesh'){
-                    element.material = new THREE.MeshStandardMaterial({color: 0xffffff})
+                    element.material = new THREE.MeshStandardMaterial({color: 0xffffff, transparent: true, opacity: 1.0})
                 }
                 else {
                     element.children.forEach(element => {
-                        element.material = new THREE.MeshStandardMaterial({color: 0xffffff})
+                        element.material = new THREE.MeshStandardMaterial({color: 0xffffff, transparent: true, opacity: 1.0})
                     })
                 }
             });
