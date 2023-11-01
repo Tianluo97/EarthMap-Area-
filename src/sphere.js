@@ -5,6 +5,6 @@ import { animationSheet }  from '/animations/animation.js'
 const geometry = new THREE.SphereGeometry(_earthRadius, 360, 180); 
 const material = new THREE.MeshBasicMaterial({color: 'blue', wireframe: true})
 
-export const earth = new THREE.Mesh(geometry, material)
+export const sphere = new THREE.Mesh(geometry, material)
 
 //animationSheet.earthAnimation(earth)

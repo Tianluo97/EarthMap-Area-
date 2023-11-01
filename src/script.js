@@ -1,6 +1,9 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import {earth} from '/sphere.js'
+import * as dat from 'dat.gui';
+
+import {sphere} from '/sphere.js'
+import {Earth} from '/earth/earth Satellite'
 
 import * as constant from '/utilities/constants.js'
 import { longlatToCoordinates, center} from '/utilities/constants.js'
@@ -8,7 +11,7 @@ import { Turbines } from'/windTurbine/turbines.js'
 import { Mountains } from '/topography/Mountains'
 
 import light from '/render/directionalLight'
-import { addGUI } from './helper/gui'
+import {addGUI} from './helper/gui'
 import {animationSheet} from './animations/animation'
 import camera from './render/camera'
 
@@ -26,11 +29,26 @@ scene.add(helper);
 addGUI(light)
 
 /**
+ * fog
+ */
+const parameters = {
+    color: 0xffffff,
+    height: 25
+};
+
+scene.fog = new THREE.FogExp2(parameters.color, 0.001)
+// animationSheet.createFogAnimation(scene.fog)
+
+const gui = new dat.GUI();
+gui.add(scene.fog, 'density', 0, 0.02)
+
+/**
  * Object
  */
-// scene.add(earth)
-// const turbines= await new Turbines(scene)
-// const mountains = await new Mountains(scene, turbines.turbineGroup)
+const earth = new Earth()
+//scene.add(earth)
+const turbines= await new Turbines(scene)
+const mountains = await new Mountains(scene, turbines.turbineGroup)
 
 /**
  * Test
@@ -41,24 +59,39 @@ const tileHeight = 111  * _kmScale
 const testPlane = new THREE.Mesh(new THREE.PlaneGeometry(tileWidth * 2, tileHeight * 2,1), new THREE.MeshLambertMaterial({color: 0xffff00}))
 testPlane.position.copy(center)
 testPlane.rotation.set(-0.7252609053826057, 0.3216092814144043, 0.2731862631967506)
+// testPlane.position.set(0, 0, 20)
 
-const turbineTest = new THREE.Mesh(new THREE.CylinderGeometry(0.001, 0.001, 300 * 0.01 *  _kmScale), new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: false}))
-turbineTest.position.copy(center)
+const turbineTest = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 600 * 0.01 *  _kmScale), new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: false}))
+turbineTest.position.copy(testPlane.position)
 turbineTest.rotation.x = -Math.PI/2
-// turbineTest.rotation.set(-0.7252609053826057, 0.3216092814144043, 0.2731862631967506)
+
+//turbineTest.rotation.set(-0.7252609053826057, 0.3216092814144043, 0.2731862631967506)
 
 /**
  * ObjectGroup
  */
 const objectGroup = new THREE.Group()
+//objectGroup.add(sphere)
 objectGroup.add(earth)
-// objectGroup.add(mountains.turbineGroup)
-// objectGroup.add(mountains.mountainsGroup)
-objectGroup.add(testPlane)
-objectGroup.add(turbineTest)
-
+objectGroup.add(mountains.turbineGroup)
+objectGroup.add(mountains.mountainsGroup)
+//objectGroup.add(testPlane)
+//objectGroup.add(turbineTest)
 scene.add(objectGroup)
+
 animationSheet.earthAnimation(objectGroup)
+animationSheet.atmosphereAnimation(objectGroup, objectGroup.children[0])
+
+
+/**
+ * camera rotation recording
+ */
+window.addEventListener('dblclick', () => {
+    console.log(camera)
+})
+
+//_x: 0.5182061374903414, _y: 0, _z: 0, _w: 0.8552557506777382
+// _x: 0.499685742059271, _y: -0.5003140605486474, _z: -0.4996857420592711, _w: 0.5003140605486475
 
 /**
  * Sizes

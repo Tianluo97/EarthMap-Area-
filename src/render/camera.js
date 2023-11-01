@@ -7,10 +7,10 @@ class RootCamera extends PerspectiveCamera {
     constructor() {
       super(35, window.innerWidth /window.innerHeight , 0.001, 100000)
       this.position.set(0, 0, 101.27290185799079);
-      this.targetPosition = new THREE.Vector3(0, 0, 0)
+      this.targetPosition = new THREE.Vector3(0, 0, 20)
       //调整相机的偏移，使得在7168 x 1600的分辨率下能保持正中心
-      //this.setViewOffset( window.innerWidth, window.innerHeight, 400, -110, window.innerWidth, window.innerHeight, );
-      this.lookAt(this.targetPosition)
+      this.setViewOffset( window.innerWidth, window.innerHeight, 400, -110, window.innerWidth, window.innerHeight, );
+      //this.lookAt(this.targetPosition)
       this.updateProjectionMatrix()
     }
 }

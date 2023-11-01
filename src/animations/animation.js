@@ -60,28 +60,56 @@ import studio from '@theatre/studio'
             y1: types.number(camera.rotation.y, { range: [-2, 2], nudgeMultiplier: 0.0001  }),
             z1: types.number(camera.rotation.z, { range: [-2, 2], nudgeMultiplier: 0.0001  }),
             }),
+            quaternion: types.compound({
+            x2: types.number(camera.quaternion.x, { range: [-10, 10], nudgeMultiplier: 0.0001  }),
+            y2: types.number(camera.quaternion.y, { range: [-10, 10], nudgeMultiplier: 0.0001  }),
+            z2: types.number(camera.quaternion.z, { range: [-10, 10], nudgeMultiplier: 0.0001  }),
+            w2: types.number(camera.quaternion.w, { range: [-10, 10], nudgeMultiplier: 0.0001  }),
+            })
         })
 
         this.camera.onValuesChange((values) => {
             const { x, y, z } = values.position
             const { a, b, c } = values.targetPosition
             const { x1, y1, z1 } = values.rotation
-            
+            const { x2, y2, z2, w2 } = values.quaternion
+
             camera.position.set(x, y, z)
             camera.rotation.set(x1 * Math.PI, y1 * Math.PI, z1 * Math.PI)
-            camera.targetPosition.copy(new THREE.Vector3(a, b, c))
-            camera.lookAt(camera.targetPosition)
+
+            const quaternion = new THREE.Quaternion(x2, y2, z2, w2 )
+            camera.applyQuaternion(quaternion)
             camera.updateProjectionMatrix()
+            // camera.targetPosition.copy(new THREE.Vector3(a, b, c))
+            // camera.lookAt(camera.targetPosition)
         })
     }
+    
 
     turbineAnimation(turbine){
-        
         this.turbine.onValuesChange((values) => {
             const x = values.opacity
             turbine.material.opacity = x
         })
     }
+
+    atmosphereAnimation(earthGroup, earthAtmosphere){
+        this.atmosphere = this.animationSheet.object('Atmosphere', {
+            opacity: types.number(10.0, {range: [0, 10], nudgeMultiplier: 0.1}),
+          })
+
+        this.atmosphere.onValuesChange((values) => {
+            const x = values.opacity
+            if (x < 2){
+                earthGroup.remove(earthAtmosphere)
+            }
+            if (x > 2){
+                earthGroup.add(earthAtmosphere)
+            }
+        })
+    }
+
+    
 }
 
 export const animationSheet = new sheet()
