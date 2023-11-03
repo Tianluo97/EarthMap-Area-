@@ -9,24 +9,35 @@ import * as constant from '/utilities/constants.js'
 import { longlatToCoordinates, center} from '/utilities/constants.js'
 import { Turbines } from'/windTurbine/turbines.js'
 import { Mountains } from '/topography/Mountains'
+import { EXRLoader } from 'three/addons/loaders/EXRLoader.js';
 
 import light from '/render/directionalLight'
+import sideLight from '/render/directionalLightSide'
+import perpendicularLight from '/render/directionalLightPerpendicular'
 import {addGUI} from './helper/gui'
+import {cameraHelper} from './helper/helper'
 import {animationSheet} from './animations/animation'
 import camera from './render/camera'
 
 /**
  * Base
  */
-// Canvas
+//Canvas
 const canvas = document.querySelector('canvas.webgl')
+const gui = new dat.GUI();
 
-// Scene
+//Scene
 const scene = new THREE.Scene()
-scene.add(light)
-const helper = new THREE.DirectionalLightHelper( light, 5 );
-scene.add(helper);
-addGUI(light)
+scene.add(light, light.targetObject)
+scene.add(perpendicularLight, perpendicularLight.targetObject)
+scene.add(sideLight, sideLight.targetObject)
+
+addGUI(light, perpendicularLight, sideLight)
+const lightHelper = new THREE.DirectionalLightHelper( light, 5 );
+const lightHelper1 = new THREE.DirectionalLightHelper( perpendicularLight, 5 );
+const lightHelper2 = new THREE.DirectionalLightHelper( sideLight, 5 );
+scene.add(lightHelper2)
+scene.add(sideLight.shadowHelper)
 
 /**
  * fog
@@ -36,11 +47,15 @@ const parameters = {
     height: 25
 };
 
-scene.fog = new THREE.FogExp2(parameters.color, 0.001)
-// animationSheet.createFogAnimation(scene.fog)
+scene.fog = new THREE.FogExp2(parameters.color, 4.11)
+//animationSheet.createFogAnimation(scene.fog)
 
-const gui = new dat.GUI();
-gui.add(scene.fog, 'density', 0, 0.02)
+//exr texture
+new EXRLoader().load( './data/farm_field_puresky_2k.exr', function ( texture ) {
+    scene.background = texture
+});
+
+gui.add(scene.fog, 'density', 0, 10.0).step(0.01)
 
 /**
  * Object
@@ -59,7 +74,7 @@ const tileHeight = 111  * _kmScale
 const testPlane = new THREE.Mesh(new THREE.PlaneGeometry(tileWidth * 2, tileHeight * 2,1), new THREE.MeshLambertMaterial({color: 0xffff00}))
 testPlane.position.copy(center)
 testPlane.rotation.set(-0.7252609053826057, 0.3216092814144043, 0.2731862631967506)
-// testPlane.position.set(0, 0, 20)
+//testPlane.position.set(0, 0, 20)
 
 const turbineTest = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 600 * 0.01 *  _kmScale), new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: false}))
 turbineTest.position.copy(testPlane.position)
@@ -70,7 +85,7 @@ turbineTest.rotation.x = -Math.PI/2
  * ObjectGroup
  */
 const objectGroup = new THREE.Group()
-//objectGroup.add(sphere)
+// objectGroup.add(sphere)
 objectGroup.add(earth)
 objectGroup.add(mountains.turbineGroup)
 objectGroup.add(mountains.mountainsGroup)
@@ -88,6 +103,7 @@ const plane = new THREE.Mesh(new THREE.PlaneGeometry(7168 * 0.01, 1600 * 0.01), 
 plane.position.set(0, 0, 20.1)
 scene.add(plane)
 animationSheet.fogMaterialAnimation(plane.material)
+
 /**
  * camera rotation recording
  */
@@ -126,7 +142,7 @@ window.addEventListener('resize', () =>
  */
 scene.add(camera)
 const helper1 = new THREE.CameraHelper( camera );
-scene.add( helper1 );
+//scene.add( helper1 );
 
 let aspect = sizes.width / sizes.height;
 const cameraHelp = new THREE.PerspectiveCamera( 30, 0.5 * aspect, 1, 10000 );
@@ -139,6 +155,8 @@ cameraHelp.position.z = 22;
  */
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
+controls.panSpeed = 0.01
+controls.zoomSpeed = 0.2
 const axesHelper = new THREE.AxesHelper( 5 );
 scene.add( axesHelper );
 
@@ -150,6 +168,7 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+renderer.shadowMap.enabled = true
 
 /**
  * Animate
@@ -161,6 +180,12 @@ const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
     deltaTime = clock.getDelta() + 0.05
+
+    lightHelper.update()
+    lightHelper1.update()
+    lightHelper2.update()
+
+    sideLight.shadowHelper.update()
 
     // Update controls
     //controls.update()

@@ -6,7 +6,8 @@ export function fogAdjustMethod (uniforms, material) {
     material.onBeforeCompile = ( shader) => {
 
         // shader.uniforms = THREE.UniformsUtils.merge([shader.uniforms, uniforms]);
-        // console.log(shader.uniforms)
+        console.log(shader)
+        
         shader.uniforms.fogNearColor = uniforms.fogNearColor
         shader.uniforms.fogFarColor = uniforms.fogFarColor
         shader.uniforms.fogNoiseFreq = uniforms.fogNoiseFreq
@@ -69,7 +70,7 @@ export function fogAdjustMethod (uniforms, material) {
                 float FogDepth = (1.0 - fogNoiseImpact * noise) * vFogDepth;
 
                 #ifdef FOG_EXP2
-                    float fogFactor = 1.0 - exp( - fogDensity * fogDensity * FogDepth * FogDepth );
+                    float fogFactor = 1.0 - exp( -fogDensity * fogDensity * FogDepth * FogDepth );
                 #else
                     float fogFactor = smoothstep( fogNear, fogFar, FogDepth );
                 #endif

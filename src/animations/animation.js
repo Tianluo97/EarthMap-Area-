@@ -7,7 +7,6 @@ import studio from '@theatre/studio'
 /**
  * Theatre.js
  */
-
  class sheet {
     constructor(){
         studio.initialize()
@@ -50,6 +49,18 @@ import studio from '@theatre/studio'
             const { x, y, z } = values.rotation
             mesh.rotation.set(x * Math.PI, y * Math.PI, z * Math.PI)
         })
+    }
+
+    earthHighAnimation(material){
+        this.earthHigh = this.animationSheet.object('EarthHigh', {
+            opacity: types.number(0, {range: [0, 1], nudgeMultiplier: 0.1}),
+          })
+
+        this.earthHigh.onValuesChange((values) => {
+            const x = values.opacity
+            material.opacity = x
+        })
+
     }
 
     cameraAnimation(camera){

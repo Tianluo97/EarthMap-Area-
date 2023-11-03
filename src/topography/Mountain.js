@@ -122,8 +122,6 @@ export class Mountain extends Mesh {
                     uvs.push( uvX * 0.5 + 0.5);
                     uvs.push( uvY * 0.5 + 0.5);
                 }
-
-
 			}   
 		}
         geometry.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );

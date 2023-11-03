@@ -46,13 +46,14 @@ export const mergedMaterial = new THREE.MeshStandardMaterial({
     side: THREE.DoubleSide,
     // roughnessMap: roughnessMap,
     transparent:true,
-    opacity:1.0
+    opacity:1.0,
+    fog: true
     // side: THREE.DoubleSide 
     // WrapS : THREE.RepeatWrapping,
     // WrapT : THREE.RepeatWrapping,
 });
 
-fogAdjustMethod(uniforms, mergedMaterial)
+//fogAdjustMethod(uniforms, mergedMaterial)
 animationSheet.topographyMaterialAnimation(mergedMaterial)
 
 const gui = new GUI()

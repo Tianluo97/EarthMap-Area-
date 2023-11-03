@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import {Mesh} from 'three'
 import { _earthRadius } from '/utilities/constants.js'
 import {EarthMaterial} from './material/earthGlobeMaterial'
+import {EarthMaterialHigh} from './material/earthGlobeHighMaterial'
 import {EarthAtmosphereMaterial} from './material/earthAtmosphereMaterial.js'
 import {CloudLayer1Material} from './material/earthCloudMaterial1.js'
 import {CloudLayer2Material} from './material/earthCloudMaterial2.js'
@@ -18,6 +19,8 @@ export class Earth {
         
         const earth = new THREE.Mesh(geometry, new EarthMaterial())
         earth.rotation.y = -Math.PI
+        const earthHigh = new THREE.Mesh(geometry, new EarthMaterialHigh())
+        earthHigh.rotation.y = -Math.PI
         const earthAtmosphere = new THREE.Mesh(geometry, new EarthAtmosphereMaterial())
         earthAtmosphere.scale.set(1.05, 1.05, 1.05)
         
@@ -35,6 +38,7 @@ export class Earth {
         animationSheet.cloudMaterialAnimation(earthCloud.material, earthCloud1.material, earthCloud2.material,)
 
 		group.add(earth);
+        group.add(earthHigh);
         group.add(earthAtmosphere);
         group.add(earthCloud)
         group.add(earthCloud1)

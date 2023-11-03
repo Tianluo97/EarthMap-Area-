@@ -16,4 +16,15 @@ body
     top: 0;
     left: 0;
     outline: none;
+    background: linear-gradient(0deg, #ffefd6 35%, rgb(123, 182, 255) 65%, rgb(44, 139, 255) 100%);
 }
+
+
+/* .webgl
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    outline: none;
+    
+} */

@@ -15,7 +15,7 @@ export class Mountains extends THREE.Group {
     super()
     this.type = "mountains"
     this.scene = scene                      
-    this.mountains = [] 
+    this.mountains = []
     this.mountainsGroup = new THREE.Group()
     this.mountainGeometries = []
     this.url = []
